@@ -2,10 +2,13 @@ package com.group18.quiz.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 import java.util.List;
 
 @Entity
+@Table(indexes = @Index(name = "idx_question_lesson_id", columnList = "lesson_id"))
 public class Question {
 
     @Id

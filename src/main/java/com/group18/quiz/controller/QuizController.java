@@ -52,11 +52,10 @@ public class QuizController {
         return new QuizResponse(lessonId, questions);
     }
 
-    @PostMapping("/submit")
-    public SubmitResponse submitQuiz(@RequestBody SubmitRequest request) {
-        Long lessonId = request.lessonId();
-        if (lessonId == null || !lessonRepository.existsById(lessonId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson not found");
+    @PostMapping("/{lessonId}/submit")
+    public SubmitResponse submitQuiz(@PathVariable Long lessonId, @RequestBody SubmitRequest request) {
+        if (!lessonRepository.existsById(lessonId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson " + lessonId + " not found");
         }
 
         List<Question> questions = questionRepository.findByLessonIdOrderById(lessonId);

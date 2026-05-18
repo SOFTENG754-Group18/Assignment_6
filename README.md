@@ -5,7 +5,7 @@ Spring Boot REST API for the Quiz Submission feature (US-17).
 ## Quiz endpoint
 
 - `GET /api/quiz/{lessonId}` — returns the lesson's questions and options as JSON; `200`, or `404` if the lesson is unknown.
-- `POST /api/quiz/submit` — body `{"lessonId":1,"answers":[0,1,1]}`; scores the attempt against stored answers and returns `score`, `total`, `percentage`, `passed` (70% threshold) and per-question `feedback`.
+- `POST /api/quiz/{lessonId}/submit` — body `{"answers":[0,1,1]}`; scores the attempt against stored answers and returns `score`, `total`, `percentage`, `passed` (70% threshold) and per-question `feedback`.
 
 Three lessons, three questions each, are seeded at startup.
 
