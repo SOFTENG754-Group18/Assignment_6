@@ -7,7 +7,7 @@ Tests GET /api/quiz/{lessonId} and POST /api/quiz/{lessonId}/submit.
 Structure:
   TG1 - Normal Load (25 users, 60s) — 60s startup delay for JVM warmup
   TG2 - Peak Load (60 users, 90s)
-Think times removed; ramp-up provides realistic stagger.
+Think times included: 2s after GET (reading quiz), 1s after POST (before next iteration).
 Serialize: TG1 completes before TG2 starts.</stringProp>
       <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
@@ -19,13 +19,13 @@ Serialize: TG1 completes before TG2 starts.</stringProp>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Normal Load - 25 Users (Lab Session)">
         <intProp name="ThreadGroup.num_threads">25</intProp>
         <intProp name="ThreadGroup.ramp_time">10</intProp>
-        <longProp name="ThreadGroup.duration">60</longProp>
-        <longProp name="ThreadGroup.delay">60</longProp>
+        <longProp name="ThreadGroup.duration">90</longProp>
+        <longProp name="ThreadGroup.delay">15</longProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">50</stringProp>
+          <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -124,6 +124,10 @@ Serialize: TG1 completes before TG2 starts.</stringProp>
           </DurationAssertion>
           <hashTree/>
         </hashTree>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 2s (reading quiz)">
+          <stringProp name="ConstantTimer.delay">2000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/quiz/${lessonId}/submit" enabled="true">
           <stringProp name="HTTPSampler.path">/api/quiz/${lessonId}/submit</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -196,6 +200,10 @@ Serialize: TG1 completes before TG2 starts.</stringProp>
           </DurationAssertion>
           <hashTree/>
         </hashTree>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1s (before next iteration)">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
         <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
@@ -272,15 +280,16 @@ Serialize: TG1 completes before TG2 starts.</stringProp>
         <hashTree/>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Peak Load - 60 Users (Deadline Surge)">
+        <boolProp name="ThreadGroup.delayedStart">true</boolProp>
         <intProp name="ThreadGroup.num_threads">60</intProp>
-        <intProp name="ThreadGroup.ramp_time">15</intProp>
-        <longProp name="ThreadGroup.duration">90</longProp>
-        <longProp name="ThreadGroup.delay">0</longProp>
+        <intProp name="ThreadGroup.ramp_time">20</intProp>
+        <longProp name="ThreadGroup.duration">60</longProp>
+        <longProp name="ThreadGroup.delay">15</longProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <boolProp name="ThreadGroup.scheduler">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">50</stringProp>
+          <intProp name="LoopController.loops">-1</intProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -379,6 +388,10 @@ Serialize: TG1 completes before TG2 starts.</stringProp>
           </DurationAssertion>
           <hashTree/>
         </hashTree>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 2s (reading quiz)">
+          <stringProp name="ConstantTimer.delay">2000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/quiz/${lessonId}/submit" enabled="true">
           <stringProp name="HTTPSampler.path">/api/quiz/${lessonId}/submit</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -451,6 +464,10 @@ Serialize: TG1 completes before TG2 starts.</stringProp>
           </DurationAssertion>
           <hashTree/>
         </hashTree>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time - 1s (before next iteration)">
+          <stringProp name="ConstantTimer.delay">1000</stringProp>
+        </ConstantTimer>
+        <hashTree/>
         <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
@@ -526,7 +543,7 @@ Serialize: TG1 completes before TG2 starts.</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
